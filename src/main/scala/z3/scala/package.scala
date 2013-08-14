@@ -1,5 +1,7 @@
 package z3
 
+import _root_.scala.language.implicitConversions
+
 package object scala {
 
   @deprecated("Use Z3NumeralIntAST instead.", "4.0a")
@@ -33,4 +35,6 @@ package object scala {
     //Predef.error(any.toString)
     sys.error(any.toString) // 2.9
   }
+
+  implicit def astvectorToSeq(v: Z3ASTVector): Seq[Z3AST] = v.toSeq
 }
