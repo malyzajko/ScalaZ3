@@ -9,8 +9,9 @@ object ScalaZ3build extends Build {
   lazy val cFiles           = file("src") / "c" * "*.c"
   lazy val soName           = System.mapLibraryName("scalaz3")
   lazy val z3Name           = System.mapLibraryName("z3")
+  lazy val z3SourceName     = if (isMac) "libz3.dylib" else z3Name
   lazy val libBinPath       = file("lib-bin")
-  lazy val z3BinFilePath    = z3LibPath / z3Name
+  lazy val z3BinFilePath    = z3LibPath / z3SourceName
   lazy val libBinFilePath   = libBinPath / soName
   lazy val jdkIncludePath   = file(System.getProperty("java.home")) / ".." / "include"
   lazy val jdkUnixIncludePath = jdkIncludePath / "linux"
@@ -175,9 +176,12 @@ object ScalaZ3build extends Build {
 
   val newMappingsTask = mappings in (Compile, packageBin) <<= (mappings in (Compile, packageBin)) map {
     case normalFiles =>
+      val paths = 
       (libBinFilePath.getAbsoluteFile -> ("lib-bin/"+libBinFilePath.getName)) +:
-      (z3BinFilePath.getAbsoluteFile -> ("lib-bin/"+z3BinFilePath.getName)) +:
+      (z3BinFilePath.getAbsoluteFile -> ("lib-bin/"+z3Name)) +:
       normalFiles
+      println(paths)
+      paths
   }
 
   val newTestClassPath = internalDependencyClasspath in (Test) <<= (artifactPath in (Compile, packageBin)) map {
